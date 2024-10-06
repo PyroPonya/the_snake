@@ -76,7 +76,7 @@ class GameObject:
 class Apple(GameObject):
     """Apple."""
 
-    def __init__(self, restricted_positions):
+    def __init__(self, restricted_positions=[SCREEN_CENTER]):
         super().__init__(body_color=APPLE_COLOR)
         self.randomize_position(restricted_positions)
 
