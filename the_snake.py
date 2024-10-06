@@ -62,10 +62,10 @@ class GameObject:
         )
 
     def draw_cell(
-        self,
-        position,
-        color=BOARD_BACKGROUND_COLOR,
-        border=BOARD_BACKGROUND_COLOR
+            self,
+            position,
+            color=BOARD_BACKGROUND_COLOR,
+            border=BOARD_BACKGROUND_COLOR
     ):
         """Draws singular cell. Color => fill. Border => outline."""
         rect = pg.Rect(position, (GRID_SIZE, GRID_SIZE))
@@ -76,16 +76,21 @@ class GameObject:
 class Apple(GameObject):
     """Apple."""
 
-    def __init__(self, restricted_positions=[SCREEN_CENTER]):
-        super().__init__(body_color=APPLE_COLOR)
+    def __init__(
+            self,
+            restricted_positions=[SCREEN_CENTER],
+            body_color=APPLE_COLOR,
+            position=SCREEN_CENTER
+    ):
+        super().__init__(body_color, position)
         self.randomize_position(restricted_positions)
 
     def randomize_position(self, restricted_positions):
         """Picks random (x, y) coordinates on screen"""
-        self.position = tuple([
+        self.position = (
             randrange(0, SCREEN_WIDTH, GRID_SIZE),
             randrange(0, SCREEN_HEIGHT, GRID_SIZE)
-        ])
+        )
         while (self.position in restricted_positions):
             self.randomize_position(restricted_positions)
 
@@ -123,24 +128,15 @@ class Snake(GameObject):
         и удаляя последний элемент, если длина змейки не увеличилась.
         """
         # append new snake head elem
-        if self.direction == UP:
-            x, y = self.get_head_position()
-            self.positions.insert(
-                0, tuple([x, (y - GRID_SIZE) % SCREEN_HEIGHT]))
-        elif self.direction == DOWN:
-            x, y = self.get_head_position()
-            self.positions.insert(
-                0, tuple([x, (y + GRID_SIZE) % SCREEN_HEIGHT]))
-        elif self.direction == LEFT:
-            x, y = self.get_head_position()
-            self.positions.insert(
-                0, tuple([(x - GRID_SIZE) % SCREEN_WIDTH, y]))
-        elif self.direction == RIGHT:
-            x, y = self.get_head_position()
-            self.positions.insert(
-                0, tuple([(x + GRID_SIZE) % SCREEN_WIDTH, y]))
-        else:
-            raise ValueError('Unknown direction to move')
+        x, y = self.get_head_position()
+        direction_x, direction_y = self.direction
+        self.positions.insert(
+            0,
+            (
+                (x + direction_x * GRID_SIZE) % SCREEN_WIDTH,
+                (y + direction_y * GRID_SIZE) % SCREEN_HEIGHT
+            )
+        )
         self.last = self.positions.pop()
 
     def draw(self):
@@ -204,7 +200,7 @@ def main():
         snake.move()
         if apple.position in snake.positions:
             snake.grow()
-            apple.__init__(snake.positions)
+            apple.randomize_position(snake.positions)
         # check if snake ate itself
         elif snake.positions[0] in snake.positions[1:]:
             snake.reset()
