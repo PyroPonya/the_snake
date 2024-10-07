@@ -108,8 +108,8 @@ class Snake(GameObject):
     и другие аспекты поведения змейки в игре.
     """
 
-    def __init__(self):
-        super().__init__(body_color=SNAKE_COLOR)
+    def __init__(self, position=SCREEN_CENTER, body_color=SNAKE_COLOR):
+        super().__init__(body_color=body_color, position=position)
         self.reset()
         self.direction = RIGHT
         self.next_direction = RIGHT
